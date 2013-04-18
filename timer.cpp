@@ -1,11 +1,11 @@
-const int FRAMES_PER_SECOND = 30;
+const int FRAMES_PER_SECOND = 25;
 
 class Timer
 
 {
     public:
 
-    //Initializes variables
+	//Initializes variables
     Timer();
 
     //The various clock actions
@@ -21,7 +21,7 @@ class Timer
     bool is_started();
     bool is_paused();
 
-    private:
+	private:
 
     //The clock time when the timer started
     int startTicks;
@@ -29,7 +29,7 @@ class Timer
     //The ticks stored when the timer was paused
     int pausedTicks;
 
-    //The timer status
+	//The timer status
     bool paused;
     bool started;
 };
