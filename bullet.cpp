@@ -20,11 +20,10 @@ class bullet
 	//void setyVel_bullet(int yVel_bull);
 	void setclips();
 	void setonScreen(bool stat);
-	void handle_input();
+	void handle_input(int player_x, int player_y);
 	void move();
 	void setXY(int x, int y);
 	void setWH(int w, int h);
-	void setcounter(int j);
 
 	//----------------------
 	//----Inspectors
@@ -33,14 +32,12 @@ class bullet
 	void getbullets(SDL_Surface *surface);
 	bool getonScreen() const;
 	int gety_bullet() const;
-	int getcounter() const;
 
 	void show();
 
 	private:
 
 	int xVel_bullet, yVel_bullet;
-	int counter;
 
 	bool onScreen;
 	SDL_Rect proj;
@@ -51,7 +48,6 @@ bullet::bullet()
 {
 	xVel_bullet = 0;
 	yVel_bullet = 0;
-	counter = 0;
 	bullets = character;
 }
 
@@ -63,7 +59,6 @@ bullet::bullet(int x, int y, int w, int h)
 	proj.h = h;
 	xVel_bullet = 0;
 	yVel_bullet = 0;
-	counter = 0;
 	bullets = character;
 }
 
@@ -81,14 +76,9 @@ int bullet::gety_bullet() const
 	return proj.y;
 }
 
-int bullet::getcounter() const
-{
-	return counter;
-}
-
 void bullet::show()
 {
-	if (onScreen == true)
+	if (getonScreen() == true)
 	{
 		apply_surface(proj.x, proj.y, bullets, screen, &clipPlayerbullet[0]);
 	}
@@ -106,16 +96,6 @@ void bullet::show()
 void bullet::setonScreen(bool stat)
 {
 	onScreen = stat;
-	//status[0] = stat[0];
-	//status[1] = stat[1];
-	//status[2] = stat[2];
-	//status[3] = stat[3];
-	//status[4] = stat[4];
-	//status[5] = stat[5];
-	//status[6] = stat[6];
-	//status[7] = stat[7];
-	//status[8] = stat[8];
-	//status[9] = stat[9];
 }
 
 void bullet::setXY(int x, int y)
@@ -130,11 +110,6 @@ void bullet::setWH(int w, int h)
 	proj.h = h;
 }
 
-void bullet::setcounter(int j)
-{
-	counter = j;
-}
-
 void bullet::setclips()
 {
 	//clip from sprite sheet
@@ -144,15 +119,16 @@ void bullet::setclips()
 	clipPlayerbullet [0].h = 15;
 }
 
-void bullet::handle_input()
+void bullet::handle_input(int player_x, int player_y)
 {
 	Uint8 *keystates = SDL_GetKeyState (NULL);
 
-    //If a key was pressed
-    if (keystates [SDLK_z])
+    //If z pressed down
+    if ((keystates [SDLK_z]) && (event.type == SDL_KEYDOWN))
 	{
-			setonScreen(true);
-			yVel_bullet = 15;
+		setonScreen(true);
+		setXY(player_x, player_y);
+		yVel_bullet = 15;
 	}
 }
 
@@ -169,4 +145,3 @@ void bullet::move()
         setonScreen(false);
     }
 }
-
