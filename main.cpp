@@ -1,7 +1,7 @@
 #include "setupSDL.cpp"
-#include "bullet.cpp"
 #include "player.cpp"
 #include "timer.cpp"
+#include "bulletsv2.cpp"
 #include <sstream>
 
 using namespace std;
@@ -34,37 +34,22 @@ int main (int argc, char* args[])
 		return 1;
 	}
 
-	int i = 0;
+	int n = 0;
 	player raymoo;
 	Timer fps;
 	raymoo.setclips();
 	setclips();
 	bullet talisman;
 	bullet *tali;
-	tali = new bullet [100];
+	tali = new bullet [50];
 	//bullet talisman ((raymoo.getX_() + PLAYER_WIDTH/4), (raymoo.getY_() + PLAYER_HEIGHT/2), 15, 15);
 
-	tali[0].setWH (15,15);
-	tali[1].setWH (15,15);
-	tali[2].setWH (15,15);
-	tali[3].setWH (15,15);
-	tali[4].setWH (15,15);
-	tali[5].setWH (15,15);
-	tali[6].setWH (15,15);
-	tali[7].setWH (15,15);
-	tali[8].setWH (15,15);
-    tali[9].setWH (15,15);
+	for (int i = 0; i < 50; i++)
+	{
+		tali[i].setWH (15,15);
+		tali[i].setclips();
+	}
 
-	tali[0].setclips();
-	tali[1].setclips();
-	tali[2].setclips();
-	tali[3].setclips();
-	tali[4].setclips();
-	tali[5].setclips();
-	tali[6].setclips();
-	tali[7].setclips();
-	tali[8].setclips();
-	tali[9].setclips();
 
 	//While the user hasn't quit
     while (quit == false)
@@ -77,8 +62,7 @@ int main (int argc, char* args[])
         {
 			//Handles event for player raymoo
 			raymoo.handle_input();
-			tali[i].setXY((raymoo.getX_() + PLAYER_WIDTH/4), (raymoo.getY_() + PLAYER_HEIGHT/2));
-			tali[i].handle_input();
+			tali[n].handle_input((raymoo.getX_() + PLAYER_WIDTH/4), (raymoo.getY_() + PLAYER_HEIGHT/2));
 
             //If the user has Xed out the window
             if (event.type == SDL_QUIT)
@@ -92,16 +76,9 @@ int main (int argc, char* args[])
 		raymoo.move();
 
 		//move talismans
-		tali[0].move();
-		tali[1].move();
-		tali[2].move();
-		tali[3].move();
-		tali[4].move();
-		tali[5].move();
-		tali[6].move();
-		tali[7].move();
-		tali[8].move();
-		tali[9].move();
+		for (int i = 0; i < 50; i++)
+			tali[i].move();
+
 
 		//Fill the screen white
 		SDL_FillRect (screen, &screen->clip_rect, SDL_MapRGB(screen->format, 0xFF, 0xFF, 0xFF));
@@ -112,27 +89,19 @@ int main (int argc, char* args[])
 		raymoo.show();
 		
 		//show talismans
-		tali[0].show();
-		tali[1].show();
-		tali[2].show();
-		tali[3].show();
-		tali[4].show();
-		tali[5].show();
-		tali[6].show();
-		tali[7].show();
-		tali[8].show();
-		tali[9].show();
+		for (int i = 0; i < 50; i++)
+			tali[i].show();
 
 		//counter to step through array
 
-		if (i >= 10)
+		if (n >= 50)
 		{
-			i = 0;
+			n = 0;
 		}
 
 		else
 		{
-			i++;
+			n++;
 		}
 
         //Update the screen
