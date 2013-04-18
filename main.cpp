@@ -1,5 +1,5 @@
 #include "setupSDL.cpp"
-#include "bullets.cpp"
+#include "bullet.cpp"
 #include "player.cpp"
 #include "timer.cpp"
 #include <sstream>
