@@ -1,176 +1,155 @@
-const int playerbullet = 0;
+#include "setupSDL.cpp"
+#include "bullets.cpp"
+#include "player.cpp"
+#include "timer.cpp"
+#include <sstream>
 
-SDL_Rect clipPlayerbullet[1];
+using namespace std;
 
-class bullet
+const int STAGE = 0;
+SDL_Rect clipstree[1];
+
+void setclips()
 {
-  public:
-
-	//----------------------
-	//----Constructors
-	//----------------------
-    
-	bullet();
-	bullet(int x, int y, int w, int h);
-	
-	//----------------------
-	//----Facilitators
-	//----------------------
-
-	//void setyVel_bullet(int yVel_bull);
-	void setclips();
-	void setstatus(bool stat);
-	void handle_input();
-	void move();
-	void setXY(int x, int y);
-	void setWH(int w, int h);
-	void setcounter(int j);
-
-	//----------------------
-	//----Inspectors
-	//----------------------
-	
-	void getbullets(SDL_Surface *surface);
-	bool getstatus() const;
-	int gety_bullet() const;
-	int getcounter() const;
-
-	void show();
-
-	private:
-
-	int xVel_bullet, yVel_bullet;
-	int counter;
-
-	bool status;
-	SDL_Rect proj;
-	SDL_Surface *bullets;
-};
-
-bullet::bullet()
-{
-	xVel_bullet = 0;
-	yVel_bullet = 0;
-	counter = 0;
-	bullets = character;
+	clipstree [0].x = 290;
+	clipstree [0].y = 340;
+	clipstree [0].h = 110;
+	clipstree [0].w = 110;
 }
 
-bullet::bullet(int x, int y, int w, int h)
+int main (int argc, char* args[])
 {
-	proj.x = x;
-	proj.y = y;
-	proj.w = w;
-	proj.h = h;
-	xVel_bullet = 0;
-	yVel_bullet = 0;
-	counter = 0;
-	bullets = character;
-}
+    //Quit flag
+    bool quit = false;
 
-//----------------------
-//----Inspectors
-//----------------------
-
-bool bullet::getstatus() const
-{
-	return status;
-}
-
-int bullet::gety_bullet() const
-{
-	return proj.y;
-}
-
-int bullet::getcounter() const
-{
-	return counter;
-}
-
-void bullet::show()
-{
-	if (bullet::getstatus() == true)
-	{
-		apply_surface(proj.x, proj.y, bullets, screen, &clipPlayerbullet[0]);
-	}
-}
-
-//----------------------
-//----Facilitator
-//----------------------
-
-//void bullet::setyVel_bullet(int yVel_bull)
-//{
-//	yVel_bullet = yVel_bull;
-//}
-
-void bullet::setstatus(bool stat)
-{
-	status = stat;
-	//status[0] = stat[0];
-	//status[1] = stat[1];
-	//status[2] = stat[2];
-	//status[3] = stat[3];
-	//status[4] = stat[4];
-	//status[5] = stat[5];
-	//status[6] = stat[6];
-	//status[7] = stat[7];
-	//status[8] = stat[8];
-	//status[9] = stat[9];
-}
-
-void bullet::setXY(int x, int y)
-{
-	proj.x = x;
-	proj.y = y;
-}
-
-void bullet::setWH(int w, int h)
-{
-	proj.w = w;
-	proj.h = h;
-}
-
-void bullet::setcounter(int j)
-{
-	counter = j;
-}
-
-void bullet::setclips()
-{
-	clipPlayerbullet [0].x = 128;
-	clipPlayerbullet [0].y = 0;
-	clipPlayerbullet [0].w = 15;
-	clipPlayerbullet [0].h = 15;
-}
-
-void bullet::handle_input()
-{
-			status = true;
-			yVel_bullet = 15;
-	//Uint8 *keystates = SDL_GetKeyState (NULL);
-
- //   //If a key was pressed
- //   if (event.type == SDL_KEYDOWN)
- //   {
- //       //Adjust the velocity
-	//	if (event.key.keysym.sym == SDLK_z)
- //       {
-	//		status = true;
-	//		yVel_bullet = 15;
-	//	}
-	//}
-}
-
-void bullet::move()
-{
-    //Move the bullet up
-    proj.y -= yVel_bullet;
-
-    //If the bullet went too far up or down
-    if ((proj.y < -15) || (proj.y + proj.h > SCREEN_HEIGHT + 15) )
+    //Initialize
+    if (init() == false)
     {
-        //remove bullet
-        status = false;
+        return 1;
     }
-}
 
+	//Load the files
+	if (load_files() == false)
+	{
+		return 1;
+	}
+
+	int i = 0;
+	player raymoo;
+	Timer fps;
+	raymoo.setclips();
+	setclips();
+	bullet talisman;
+	bullet *tali;
+	tali = new bullet [100];
+	//bullet talisman ((raymoo.getX_() + PLAYER_WIDTH/4), (raymoo.getY_() + PLAYER_HEIGHT/2), 15, 15);
+
+	tali[0].setWH (15,15);
+	tali[1].setWH (15,15);
+	tali[2].setWH (15,15);
+	tali[3].setWH (15,15);
+	tali[4].setWH (15,15);
+	tali[5].setWH (15,15);
+	tali[6].setWH (15,15);
+	tali[7].setWH (15,15);
+	tali[8].setWH (15,15);
+    tali[9].setWH (15,15);
+
+	tali[0].setclips();
+	tali[1].setclips();
+	tali[2].setclips();
+	tali[3].setclips();
+	tali[4].setclips();
+	tali[5].setclips();
+	tali[6].setclips();
+	tali[7].setclips();
+	tali[8].setclips();
+	tali[9].setclips();
+
+	//While the user hasn't quit
+    while (quit == false)
+    {
+		//Start the frame timer
+        fps.start();
+
+		//While there's events to handle
+        while (SDL_PollEvent(&event))
+        {
+			//Handles event for player raymoo
+			raymoo.handle_input();
+			tali[i].setXY((raymoo.getX_() + PLAYER_WIDTH/4), (raymoo.getY_() + PLAYER_HEIGHT/2));
+			tali[i].handle_input();
+
+            //If the user has Xed out the window
+            if (event.type == SDL_QUIT)
+            {
+                //Quit the program
+                quit = true;
+            }
+        }
+
+		//move raymoo
+		raymoo.move();
+
+		//move talismans
+		tali[0].move();
+		tali[1].move();
+		tali[2].move();
+		tali[3].move();
+		tali[4].move();
+		tali[5].move();
+		tali[6].move();
+		tali[7].move();
+		tali[8].move();
+		tali[9].move();
+
+		//Fill the screen white
+		SDL_FillRect (screen, &screen->clip_rect, SDL_MapRGB(screen->format, 0xFF, 0xFF, 0xFF));
+		
+		apply_surface(SCREEN_WIDTH/4, SCREEN_HEIGHT/4, stage, screen, &clipstree[0]);
+		
+		//show raymoo
+		raymoo.show();
+		
+		//show talismans
+		tali[0].show();
+		tali[1].show();
+		tali[2].show();
+		tali[3].show();
+		tali[4].show();
+		tali[5].show();
+		tali[6].show();
+		tali[7].show();
+		tali[8].show();
+		tali[9].show();
+
+		//counter to step through array
+
+		if (i >= 10)
+		{
+			i = 0;
+		}
+
+		else
+		{
+			i++;
+		}
+
+        //Update the screen
+        if (SDL_Flip(screen) == -1)
+        {
+            return 1;
+        }
+
+		//Cap the frame rate
+        if(fps.get_ticks() < 1000 / FRAMES_PER_SECOND)
+        {
+            SDL_Delay((1000 / FRAMES_PER_SECOND) - fps.get_ticks());
+        }
+    }
+
+    //Clean up
+    clean_up();
+
+    return 0;
+}
