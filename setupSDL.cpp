@@ -1,14 +1,15 @@
 #include <string>
-#include <sstream>
 #include "SDL.h"
 #include "SDL_ttf.h"
 #include "SDL_image.h"
-
 using namespace std;
 
-const int SCREEN_WIDTH = 800;
-const int SCREEN_HEIGHT = 800;
+const int SCREEN_WIDTH = 380;
+const int SCREEN_HEIGHT = 445;
 const int SCREEN_BPP = 32;
+
+const int PLAYER_WIDTH = 32;
+const int PLAYER_HEIGHT = 48;
 
 SDL_Surface *proj = NULL;
 SDL_Surface *character = NULL;
@@ -17,7 +18,7 @@ SDL_Surface *screen = NULL;
 
 SDL_Event event;
 
-SDL_Surface *load_image( std::string filename )
+SDL_Surface *load_image (string filename)
 {
     //The image that's loaded
     SDL_Surface* loadedImage = NULL;
@@ -26,25 +27,24 @@ SDL_Surface *load_image( std::string filename )
     SDL_Surface* optimizedImage = NULL;
 
     //Load the image
-    loadedImage = IMG_Load( filename.c_str() );
+    loadedImage = IMG_Load (filename.c_str());
 
     //If the image loaded
-    if( loadedImage != NULL )
+    if (loadedImage != NULL)
     {
         //Create an optimized surface
-        optimizedImage = SDL_DisplayFormatAlpha( loadedImage );
+        optimizedImage = SDL_DisplayFormatAlpha (loadedImage);
 
         //Free the old surface
-        SDL_FreeSurface( loadedImage );
+        SDL_FreeSurface (loadedImage);
 
         //If the surface was optimized
-        if( optimizedImage != NULL )
+        if (optimizedImage != NULL)
         {
             //Color key surface
-            SDL_SetColorKey( optimizedImage, SDL_SRCCOLORKEY, SDL_MapRGB( optimizedImage->format, 0, 0xFF, 0xFF ) );
+            SDL_SetColorKey (optimizedImage, SDL_SRCCOLORKEY, SDL_MapRGB( optimizedImage->format, 0, 0xFF, 0xFF));
         }
     }
-
     //Return the optimized surface
     return optimizedImage;
 }
@@ -53,7 +53,6 @@ void apply_surface (int x, int y, SDL_Surface*source, SDL_Surface* destination, 
 {
     //Temporary rectangle to hold offsets
     SDL_Rect offset;
-
     offset.x = x;
     offset.y = y;
 
@@ -67,7 +66,6 @@ bool init()
     {
         return false;
     }
-
     screen = SDL_SetVideoMode (SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_BPP, SDL_SWSURFACE);
     
     //Check for error in setting up screen
@@ -89,25 +87,24 @@ bool init()
 bool load_files()
 {
     //Load the dot image
-    character = load_image( "characters.png" );
-  proj = load_image ("projectile.png");
+	character = load_image ("characters.png");
+	proj = load_image ("projectile.png");
 	stage = load_image ("stages.png");
 
     //If there was a problem in loading the dot
-    if( character, proj, stage == NULL )
+    if (proj, character, stage == NULL )
     {
         return false;
     }
-
     //If everything loaded fine
     return true;
 }
 
 void clean_up()
 {
-    SDL_FreeSurface(character);
-    SDL_FreeSurface(proj);
-    SDL_FreeSurface(stage);
+	SDL_FreeSurface (character);
+	SDL_FreeSurface (proj);
+	SDL_FreeSurface (stage);
 
     SDL_Quit();
 }
