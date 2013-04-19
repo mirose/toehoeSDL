@@ -126,7 +126,7 @@ void bullet::handle_input(int player_x, int player_y)
     //If z pressed down
     if (event.type == SDL_KEYDOWN)
 	{
-		if (event.key.keysym.sym = SDLK_z)
+		if (event.key.keysym.sym == SDLK_z)
 		{
 			setonScreen(true);
 			setXY(player_x, player_y);
