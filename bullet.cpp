@@ -124,11 +124,14 @@ void bullet::handle_input(int player_x, int player_y)
 	Uint8 *keystates = SDL_GetKeyState (NULL);
 
     //If z pressed down
-    if ((keystates [SDLK_z]) && (event.type == SDL_KEYDOWN))
+    if (event.type == SDL_KEYDOWN)
 	{
-		setonScreen(true);
-		setXY(player_x, player_y);
-		yVel_bullet = 15;
+		if (event.key.keysym.sym = SDLK_z)
+		{
+			setonScreen(true);
+			setXY(player_x, player_y);
+			yVel_bullet = 15;
+		}
 	}
 }
 
