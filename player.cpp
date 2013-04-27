@@ -1,4 +1,4 @@
-//------CLASS DECLARATION-------
+//------Global Members-------
 
 //Character Dimensions
 const int PLAYER_WIDTH = 32;
@@ -16,6 +16,8 @@ SDL_Rect clipsNeutral_R[ 4 ];
 SDL_Rect clipsLeft[ 7 ];
 SDL_Rect clipsRight[ 7 ];
 
+
+//----------CLASS Declaration-------------
 class player
 {
     public:
@@ -28,42 +30,51 @@ class player
         player(int type);
         
         //----------------------
-        //----Facilitators
+        //----Mutators
         //----------------------
         
+		void setX(int x);
+		void setY(int y);
+
         void setLife(int life);
-  	void setType(int type);
+		void setType(int type);
 		void setBomb(int bomb);
 		void setPlevel(int plevel);
 		void setScore(int score);
-		void setclips();
-		void setShoot_(bool shoot_);
-
-		//Takes key presses interract with game objects
-		void handle_input();
-		void fireBullet();
-
-		//Moves the dot
-		void move();
+		void setClips();
 
         //----------------------
         //----Inspectors
         //----------------------
            
+
+		int getX() const;
+		int getY() const;
+		int getXVel() const;
+		int getYVel() const;
         int getLife() const;
         int getType() const;
         int getBomb() const;
         int getPlevel() const;
         int getScore() const;
-		int getX_() const;
-		int getY_() const;
-		int getXVel_() const;
-		int getYVel_() const;
-		bool getShoot_() const;
+
+        //----------------------
+        //----Facilitators
+        //----------------------
+
+		//Moves the dot
+		void move();
 
 		//Shows the dot on the screen
 		void show();
 
+		//Takes key presses interract with game objects
+		void handle_input();
+
+
+	//----------------------
+	//----Private Members
+	//----------------------
 
     private:
 
@@ -77,17 +88,14 @@ class player
         int bomb_;
         int plevel_;
         int score_;
-		bool shoot_;
-		int shots;
 
 		// Graphics
 		int frame;
-		int status;
+		int state;
 		int delay;
 		
         SDL_Surface *mainSprite;
-		SDL_Rect box;
-		SDL_Rect* clip;
+		SDL_Rect *clip;
 
 };
 
@@ -109,16 +117,13 @@ class player
         bomb_ = 2;
         plevel_ = 0;
         score_ = 0;
-		shots = 0;
-		shoot_ = false;
 
 		//Graphics
 		mainSprite = character;
 		frame = 0;
-		status = NEUTRAL_L;
+		state = NEUTRAL_L;
 		delay = 0;
 
-		//Game Assets
     }
         
 	player::player(int type)
@@ -133,157 +138,17 @@ class player
         bomb_ = 2;
         plevel_ = 0;
 		score_ = 0;
-		shots = 0;
-		shoot_ = false;
 
 		//Graphics
 		mainSprite = character;
 		frame = 0;
-		status = NEUTRAL_L;
+		state = NEUTRAL_L;
 		delay = 0;
-
-		//Game Assets
-
 
     }
 
-
 //----------------------
-//----Inspectors
-//----------------------
-
-	int player::getLife() const
-	{
-		return life_;
-	}
-
-	int player::getType() const
-	{
-		return type_;
-	}
-
-	int player::getBomb() const
-	{
-		return bomb_;
-	}
-
-	int player::getPlevel() const
-	{
-		return plevel_;
-	}
-
-	int player::getScore() const
-	{
-		return score_;
-	}
-
-	int player::getX_() const
-	{
-		return x_;
-	}
-
-	int player::getY_() const
-	{
-		return y_;
-	}
-
-	int player::getXVel_() const
-	{
-		return xVel_;
-	}
-
-	int player::getYVel_() const
-	{
-		return xVel_;
-	}
-
-	bool player::getShoot_() const
-	{
-		return shoot_;
-	}
-
-	//Sprite Animation
-	void player::show()
-	{
-		if (xVel_ < 0)
-		{
-			status = LEFT;
-			frame++;
-		}
-
-		else if (xVel_ > 0)
-		{
-			status = RIGHT;
-			frame++;
-		}
-
-		else
-		{
-			if ((status == LEFT) || (status == NEUTRAL_L))
-			{
-				status = NEUTRAL_L;
-				delay++;
-			}
-
-			else if ((status == RIGHT) || (status ==NEUTRAL_R))
-			{
-				status = NEUTRAL_R;
-				delay++;
-			}
-		}
-
-		// Delay the animation frame
-		if (delay > 2 )
-		{
-			frame++;
-			delay = 0;
-		}
-
-		// Loop the animation 
-		// Neutral_L is idling with skirt flowing left,
-		// Neutral_R for flowing right
-
-		if ((frame >= 7) && (status == LEFT))
-		{
-			frame = 3;
-		}
-
-		else if ((frame >= 7) && (status == RIGHT))
-		{
-			frame = 3;
-		}
-		else if ((frame >= 4) && (status == NEUTRAL_L))
-		{
-			frame = 0;
-		}
-
-		else if ((frame >= 4) && (status == NEUTRAL_R))
-		{
-			frame = 0;
-		}
-
-		if (status == RIGHT)
-		{
-			apply_surface(x_, y_, mainSprite, screen, &clipsRight[frame]);
-		}
-    
-		else if (status == LEFT)
-		{
-			apply_surface(x_, y_, mainSprite, screen, &clipsLeft[frame]);
-		}
-
-		else if (status == NEUTRAL_R)
-		{
-			apply_surface (x_, y_, mainSprite, screen, &clipsNeutral_R[frame]);
-		}
-
-		else
-		{
-			apply_surface(x_, y_, mainSprite, screen, &clipsNeutral_L[frame]);
-		}
-	}
-//----------------------
-//----Facilitators
+//----Mutators
 //----------------------
         
 	void player::setLife(int life)
@@ -311,76 +176,7 @@ class player
 		score_ = score;
 	}
 
-	void player::setShoot_(bool shoot)
-	{
-		shoot_ = shoot;
-	}
-
-
-	void player::move()
-	{
-		//Move the dot left or right
-		x_ += xVel_;
-
-		//If the dot went too far to the left or right
-		if( ( x_ < 0 ) || ( x_ + PLAYER_WIDTH > SCREEN_WIDTH ) )
-		{
-			//move back
-			x_ -= xVel_;
-		}
-
-		//Move the dot up or down
-		y_ += yVel_;
-
-		//If the dot went too far up or down
-		if( ( y_ < 0 ) || ( y_ + PLAYER_HEIGHT > SCREEN_HEIGHT ) )
-		{
-			//move back
-			y_ -= yVel_;
-		}
-	}
-
-	//void player::fireBullet()
-	//{
-	//	//creates a talisman bullet
-	//	bullet talisman ((this->getX_() + PLAYER_WIDTH/4), (this->getY_() + PLAYER_HEIGHT/2), 15, 15, 0 , 15);
-	//	talisman.setclips();
-	//	bulletSet.push_back(talisman);
-	//	cout << "shot fired" << endl; 
-	//}
-
-	void player::handle_input()
-	{
-		//If a key was pressed
-		if( event.type == SDL_KEYDOWN )
-		{
-			//Adjust the velocity
-			switch( event.key.keysym.sym )
-			{
-				case SDLK_UP: yVel_ -= PLAYER_HEIGHT / 5; break;
-				case SDLK_DOWN: yVel_ += PLAYER_HEIGHT / 5; break;
-				case SDLK_LEFT: xVel_ -= PLAYER_WIDTH / 5; break;
-				case SDLK_RIGHT: xVel_ += PLAYER_WIDTH / 5; break;
-				//case sdlk_z: 
-				//	this->firebullet(); break;
-			}
-		}
-		//If a key was released
-		else if( event.type == SDL_KEYUP )
-		{
-			//Adjust the velocity
-			switch( event.key.keysym.sym )
-			{
-				case SDLK_UP: yVel_ += PLAYER_HEIGHT / 5; break;
-				case SDLK_DOWN: yVel_ -= PLAYER_HEIGHT / 5; break;
-				case SDLK_LEFT: xVel_ += PLAYER_WIDTH / 5; break;
-				case SDLK_RIGHT: xVel_ -= PLAYER_WIDTH / 5; break;
-				case SDLK_z: ; break;
-			}
-		}
-	}
-
-void player::setclips()
+void player::setClips()
 {
 	//Neutral Left
 	clipsNeutral_L [0].x = 0;
@@ -496,3 +292,196 @@ void player::setclips()
     clipsRight [6].w = PLAYER_WIDTH;
     clipsRight [6].h = PLAYER_HEIGHT;
 }
+
+//----------------------
+//----Inspectors
+//----------------------
+
+
+	int player::getX() const
+	{
+		return x_;
+	}
+
+	int player::getY() const
+	{
+		return y_;
+	}
+
+	int player::getXVel() const
+	{
+		return xVel_;
+	}
+
+	int player::getYVel() const
+	{
+		return yVel_;
+	}
+
+	int player::getLife() const
+	{
+		return life_;
+	}
+
+	int player::getType() const
+	{
+		return type_;
+	}
+
+	int player::getBomb() const
+	{
+		return bomb_;
+	}
+
+	int player::getPlevel() const
+	{
+		return plevel_;
+	}
+
+	int player::getScore() const
+	{
+		return score_;
+	}
+
+
+//----------------------
+//----Facilitators
+//----------------------
+
+	//Charater movement
+	void player::move()
+	{
+		//Move the dot left or right
+		x_ += xVel_;
+
+		//If the dot went too far to the left or right
+		if( ( x_ < 0 ) || ( x_ + PLAYER_WIDTH > SCREEN_WIDTH ) )
+		{
+			//move back
+			x_ -= xVel_;
+		}
+
+		//Move the dot up or down
+		y_ += yVel_;
+
+		//If the dot went too far up or down
+		if( ( y_ < 0 ) || ( y_ + PLAYER_HEIGHT > SCREEN_HEIGHT ) )
+		{
+			//move back
+			y_ -= yVel_;
+		}
+	}
+
+	//Sprite Animation
+	void player::show()
+	{
+		//Animation states while moving left/right
+		if (xVel_ < 0)
+		{
+			state = LEFT;
+			frame++;
+		}
+
+		else if (xVel_ > 0)
+		{
+			state = RIGHT;
+			frame++;
+		}
+
+		//Animation states while idling
+		//Neutral_L is idling with skirt flowing left,
+		//Neutral_R for flowing right
+		else
+		{
+			if ((state == LEFT) || (state == NEUTRAL_L))
+			{
+				state = NEUTRAL_L;
+				delay++;
+			}
+
+			else if ((state == RIGHT) || (state == NEUTRAL_R))
+			{
+				state = NEUTRAL_R;
+				delay++;
+			}
+		}
+
+		//Delay the animation frame *to be changed in future
+		if (delay > 2 )
+		{
+			frame++;
+			delay = 0;
+		}
+
+		//Decide animation frames base on state and loop
+		if ((frame >= 7) && (state == LEFT))
+		{
+			frame = 3;
+		}
+
+		else if ((frame >= 7) && (state == RIGHT))
+		{
+			frame = 3;
+		}
+		else if ((frame >= 4) && (state == NEUTRAL_L))
+		{
+			frame = 0;
+		}
+
+		else if ((frame >= 4) && (state == NEUTRAL_R))
+		{
+			frame = 0;
+		}
+
+		//Apply frame onto screen
+		if (state == RIGHT)
+		{
+			apply_surface(x_, y_, mainSprite, screen, &clipsRight[frame]);
+		}
+    
+		else if (state == LEFT)
+		{
+			apply_surface(x_, y_, mainSprite, screen, &clipsLeft[frame]);
+		}
+
+		else if (state == NEUTRAL_R)
+		{
+			apply_surface (x_, y_, mainSprite, screen, &clipsNeutral_R[frame]);
+		}
+
+		else
+		{
+			apply_surface(x_, y_, mainSprite, screen, &clipsNeutral_L[frame]);
+		}
+	}
+
+	//Input handling
+	void player::handle_input()
+	{
+		//If a key was pressed
+		if( event.type == SDL_KEYDOWN )
+		{
+			//Adjust the velocity
+			switch( event.key.keysym.sym )
+			{
+				case SDLK_UP: yVel_ -= PLAYER_HEIGHT / 5; break;
+				case SDLK_DOWN: yVel_ += PLAYER_HEIGHT / 5; break;
+				case SDLK_LEFT: xVel_ -= PLAYER_WIDTH / 5; break;
+				case SDLK_RIGHT: xVel_ += PLAYER_WIDTH / 5; break;
+			}
+		}
+
+		//If a key was released
+		else if( event.type == SDL_KEYUP )
+		{
+			//Adjust the velocity
+			switch( event.key.keysym.sym )
+			{
+				case SDLK_UP: yVel_ += PLAYER_HEIGHT / 5; break;
+				case SDLK_DOWN: yVel_ -= PLAYER_HEIGHT / 5; break;
+				case SDLK_LEFT: xVel_ += PLAYER_WIDTH / 5; break;
+				case SDLK_RIGHT: xVel_ -= PLAYER_WIDTH / 5; break;
+				case SDLK_z: ; break;
+			}
+		}
+	}
