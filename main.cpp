@@ -2,6 +2,7 @@
 #include "player.cpp"
 #include "timer.cpp"
 #include "bulletsv2.cpp"
+#include "enemy.cpp"
 #include <sstream>
 
 using namespace std;
@@ -36,13 +37,14 @@ int main (int argc, char* args[])
 
 	int n = 0;
 	player raymoo;
+	enemy fairy;
 	Timer fps;
 	raymoo.setclips();
+	fairy.setclips();
 	setclips();
 	bullet talisman;
 	bullet *tali;
 	tali = new bullet [50];
-	//bullet talisman ((raymoo.getX_() + PLAYER_WIDTH/4), (raymoo.getY_() + PLAYER_HEIGHT/2), 15, 15);
 
 	for (int i = 0; i < 50; i++)
 	{
@@ -60,7 +62,7 @@ int main (int argc, char* args[])
 		//While there's events to handle
         while (SDL_PollEvent(&event))
         {
-			//Handles event for player raymoo
+			//Handles event for player raymoozzzzzzzzzzzzzzzzzz
 			raymoo.handle_input();
 			tali[n].handle_input((raymoo.getX_() + PLAYER_WIDTH/4), (raymoo.getY_() + PLAYER_HEIGHT/2));
 
@@ -87,14 +89,17 @@ int main (int argc, char* args[])
 		
 		//show raymoo
 		raymoo.show();
+
+		fairy.show();
 		
 		//show talismans
 		for (int i = 0; i < 50; i++)
 			tali[i].show();
 
+
 		//counter to step through array
 
-		if (n >= 50)
+		if (n == 49)
 		{
 			n = 0;
 		}
