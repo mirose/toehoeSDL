@@ -21,10 +21,7 @@ class enemy
 	//----------------------
 	void setclips();
 
-	//Takes key presses and adjusts the player's velocity
-	void handle_input();
-
-	//Moves the player
+	//Moves the enemy
 	void move();
 
 	int getX_() const;
@@ -32,7 +29,7 @@ class enemy
 	int getXVel_() const;
 	int getYVel_() const;
 
-	//Shows the player on the screen
+	//Shows the enemy on the screen
 	void show();
     
 	private:
