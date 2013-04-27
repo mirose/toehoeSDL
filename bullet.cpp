@@ -47,7 +47,7 @@ class bullet
 		void move();
 		void show();
 		void handle_input(int x, int y);
-
+		bool check_collision( SDL_Rect target );
 
 	//----------------------
 	//----Private Members
@@ -61,6 +61,7 @@ class bullet
 
 		// Graphics
 		bool onScreen;
+		//hitbox * bulletBox;
 		SDL_Rect proj;
 		SDL_Surface *bulletSprite;
 };
@@ -211,3 +212,48 @@ class bullet
 			}
 		}
 	}
+
+bool bullet::check_collision( SDL_Rect target )
+{
+    //The sides of the rectangles
+    int leftA, leftB;
+    int rightA, rightB;
+    int topA, topB;
+    int bottomA, bottomB;
+
+    //Calculate the sides of rect A
+	leftA = this->proj.x;
+    rightA = this->proj.x + this->proj.w;
+    topA = this->proj.y;
+    bottomA = this->proj.x + this->proj.h;
+        
+    //Calculate the sides of rect B
+    leftB = target.x;
+    rightB = target.x + target.w;
+    topB = target.y;
+    bottomB = target.y + target.h;
+
+    //If any of the sides from A are outside of B
+    if( bottomA <= topB )
+    {
+        return false;
+    }
+    
+    if( topA >= bottomB )
+    {
+        return false;
+    }
+    
+    if( rightA <= leftB )
+    {
+        return false;
+    }
+    
+    if( leftA >= rightB )
+    {
+        return false;
+    }
+    
+    //If none of the sides from A are outside B
+    return true;
+}
