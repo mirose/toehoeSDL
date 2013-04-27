@@ -15,7 +15,7 @@ SDL_Surface *proj = NULL;
 SDL_Surface *character = NULL;
 SDL_Surface *stage = NULL;
 SDL_Surface *screen = NULL;
-SDL_Surface *enemy = NULL;
+SDL_Surface *enmyPNG = NULL;
 SDL_Surface *icon = NULL;
 
 SDL_Event event;
@@ -92,11 +92,11 @@ bool load_files()
 	character = load_image ("characters.png");
 	proj = load_image ("projectile.png");
 	stage = load_image ("stages.png");
-	enemy = load_image ("enmyboss.png");
+	enmyPNG = load_image ("enmyboss.png");
 	icon = load_image ("icon.ico");
 
     //If there was a problem in loading the dot
-    if (proj == NULL && character == NULL && stage == NULL && enemy == NULL )
+    if (proj == NULL && character == NULL && stage == NULL && enmyPNG == NULL )
     {
         return false;
     }
@@ -109,7 +109,7 @@ void clean_up()
 	SDL_FreeSurface (character);
 	SDL_FreeSurface (proj);
 	SDL_FreeSurface (stage);
-	SDL_FreeSurface (enemy);
+	SDL_FreeSurface (enmyPNG);
 
     SDL_Quit();
 }
